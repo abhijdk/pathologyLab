@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/doctors")
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class DoctorController {
         return doctorService.getAllDoctors();
     }
 
+    // ✅ FIXED UPDATE API
     @PutMapping("/{id}")
     public Doctor update(@PathVariable Integer id, @RequestBody Doctor doctor) {
         return doctorService.updateDoctor(id, doctor);
