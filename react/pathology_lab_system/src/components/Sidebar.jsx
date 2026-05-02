@@ -10,6 +10,11 @@ export default function Sidebar({ setPage }) {
       <button style={styles.btn} onClick={() => setPage("doctor")}>
         Doctor
       </button>
+
+      <button style={styles.btn} onClick={() => setPage("test")}>
+        Test
+      </button>
+
     </div>
   );
 }
