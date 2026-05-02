@@ -11,7 +11,6 @@ export default function DoctorPage() {
   const [name, setName] = useState("");
   const [percentage, setPercentage] = useState("");
 
-  // ================= LOAD DOCTORS =================
   const loadDoctors = async () => {
     const res = await axios.get(API);
     setDoctors(res.data);
@@ -21,7 +20,6 @@ export default function DoctorPage() {
     loadDoctors();
   }, []);
 
-  // ================= ADD DOCTOR =================
   const addDoctor = async () => {
     if (!name || !percentage) return;
 
@@ -38,7 +36,6 @@ export default function DoctorPage() {
     loadDoctors();
   };
 
-  // ================= EDIT DOCTOR =================
   const editDoctor = async (d) => {
     const newName = prompt("Doctor Name", d.name);
     const newPercent = prompt("Commission %", d.commissionPercentage);
@@ -54,7 +51,6 @@ export default function DoctorPage() {
     loadDoctors();
   };
 
-  // ================= PAY DOCTOR (MAIN FIX) =================
   const payDoctor = async (d) => {
     const pay = Number(prompt("Enter payment amount"));
 
@@ -68,7 +64,6 @@ export default function DoctorPage() {
     loadDoctors();
   };
 
-  // ================= DELETE =================
   const deleteDoctor = async (id) => {
     if (window.confirm("Delete doctor?")) {
       await axios.delete(`${API}/${id}`);
@@ -76,7 +71,6 @@ export default function DoctorPage() {
     }
   };
 
-  // ================= SEARCH =================
   const filtered = doctors.filter((d) =>
     d.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -84,10 +78,9 @@ export default function DoctorPage() {
   return (
     <div className="container-fluid" style={{ marginLeft: "240px" }}>
 
-      {/* HEADER */}
       <h3 className="mt-3 fw-bold">🧑‍⚕️ Doctor Management</h3>
 
-      {/* SEARCH + ADD */}
+      {/* SEARCH */}
       <div className="d-flex align-items-center gap-3 my-3">
 
         <input
@@ -118,12 +111,12 @@ export default function DoctorPage() {
       {/* TABLE */}
       <div className="card shadow-sm">
 
-        <table className="table table-hover table-bordered mb-0">
+        <table className="table table-hover table-bordered mb-0 text-center">
 
           <thead className="table-dark">
             <tr>
               <th>#</th>
-              <th>Name</th>
+              <th>Doctor</th>
               <th>%</th>
               <th>Total</th>
               <th>Received</th>
@@ -135,24 +128,40 @@ export default function DoctorPage() {
           <tbody>
             {filtered.map((d, i) => {
 
-              const pending =
-                Number(d.totalCommission) -
-                Number(d.receivedCommission);
+              const total = Number(d.totalCommission) || 0;
+              const received = Number(d.receivedCommission) || 0;
+              const pending = total - received;
+
+              // 🎨 COLOR LOGIC (NEW)
+              const rowStyle = {
+                backgroundColor:
+                  pending === 0
+                    ? "#d4edda"   // green (paid)
+                    : pending > 5000
+                    ? "#f8d7da"   // red (high pending)
+                    : "#fff3cd"   // yellow (medium)
+              };
 
               return (
-                <tr key={d.doctorId}>
+                <tr key={d.doctorId} style={rowStyle}>
+
                   <td>{i + 1}</td>
-                  <td>{d.name}</td>
-                  <td>{d.commissionPercentage}%</td>
 
-                  <td>₹ {d.totalCommission}</td>
-
-                  <td className="text-success">
-                    ₹ {d.receivedCommission}
+                  {/* 🟦 DOCTOR NAME COLOR */}
+                  <td style={{ fontWeight: "bold", color: "#0d6efd" }}>
+                    {d.name}
                   </td>
 
-                  <td className="text-danger fw-bold">
-                    ₹ {pending}
+                  <td>{d.commissionPercentage}%</td>
+
+                  <td>₹ {total.toLocaleString("en-IN")}</td>
+
+                  <td style={{ color: "green", fontWeight: "bold" }}>
+                    ₹ {received.toLocaleString("en-IN")}
+                  </td>
+
+                  <td style={{ color: "red", fontWeight: "bold" }}>
+                    ₹ {pending.toLocaleString("en-IN")}
                   </td>
 
                   <td>
