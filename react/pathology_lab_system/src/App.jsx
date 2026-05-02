@@ -3,6 +3,7 @@ import Sidebar from "./components/Sidebar";
 import Home from "./pages/Home";
 import DoctorPage from "./pages/DoctorPage";
 import TestPage from "./pages/TestPage";
+import PatientPage from "./pages/PatientPage";
 
 export default function App() {
   const [page, setPage] = useState("home");
@@ -14,7 +15,7 @@ export default function App() {
       {page === "home" && <Home />}
       {page === "doctor" && <DoctorPage />}
       {page === "test" && <TestPage />}
-      
+      {page === "patient" && <PatientPage />}
     </div>
   );
 }

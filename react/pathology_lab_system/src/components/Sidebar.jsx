@@ -15,6 +15,11 @@ export default function Sidebar({ setPage }) {
         Test
       </button>
 
+      <button style={styles.btn} onClick={() => setPage("patient")}>
+        Patient
+      </button>
+      
+
     </div>
   );
 }
