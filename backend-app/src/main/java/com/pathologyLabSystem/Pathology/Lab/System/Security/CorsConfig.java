@@ -20,11 +20,21 @@ public class CorsConfig {
         // Allow credentials (important if you are using JWT cookies or authorization headers)
         config.setAllowCredentials(true);
 
-        // Explicitly allow your Vercel URL and Localhost for testing
+//        // Explicitly allow your Vercel URL and Localhost for testing
+//        config.setAllowedOrigins(List.of(
+//                "https://pathology-lab-one.vercel.app",
+//                "http://localhost:3000",
+//                "http://localhost:5173" // Vite default
+//        ));
+
+
+        // Explicitly allow your new custom domains and local testing ports
         config.setAllowedOrigins(List.of(
-                "https://pathology-lab-one.vercel.app",
+                "https://airteltechnology.in",
+                "https://www.airteltechnology.in",
+                "https://pathology-lab-one.vercel.app", // Good to keep as a backup
                 "http://localhost:3000",
-                "http://localhost:5173" // Vite default
+                "http://localhost:5173"
         ));
 
         // Allow all headers and standard API methods
