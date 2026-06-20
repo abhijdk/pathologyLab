@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: Pathology-Lab-System
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/healthcare
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        type:
+          json_format_mapper: jackson
+
+# Move 'security' completely to the left (out of the 'spring' block)
+security:
+  jwt:
+    secret-key: ${JWT_SECRET:saiofal_lafkjsjejkjlkjdajflaksjflkjlkfja_make_sure_this_is_64_chars_long}
+    issuer: ${JWT_ISSUER:api.substring.com}
+    access-ttl-seconds: ${JWT_ACCESS_TTL:3600}
+    refresh-ttl-seconds: ${JWT_REFRESH_TTL:86400}
+    refresh-cookie-name: ${JWT_REFRESH_COOKIE_NAME:refresh_token}
+    cookie-secure: ${JWT_COOKIE_SECURE:true}
+    cookie-http-only: ${JWT_COOKIE_HTTP_ONLY:true}
+    cookie-same-site: ${JWT_COOKIE_SAME_SITE:Lax}

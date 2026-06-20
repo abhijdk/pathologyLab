@@ -1,0 +1,117 @@
+
+CREATE DATABASE pathologylab_new;
+USE pathologylab_new;
+
+CREATE TABLE patient (
+    patient_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255),
+    age INT,
+    gender VARCHAR(255),
+    phone VARCHAR(255),
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE doctor (
+    doctor_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255),
+    commission_percentage DECIMAL(10,2),
+    total_commission DECIMAL(10,2),
+    received_commission DECIMAL(10,2)
+);
+
+CREATE TABLE test_master (
+    test_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    test_name VARCHAR(255),
+    description VARCHAR(255),
+    is_active INT,
+    display_order INT
+);
+
+INSERT INTO test_master (test_name, description, is_active, display_order) VALUES
+('Blood Test', 'All blood related investigations', 1, 1),
+('Urine Test', 'Urine examination', 1, 2),
+('Stool Test', 'Stool examination', 1, 3),
+('Semen Test', 'Semen analysis', 1, 4);
+
+
+CREATE TABLE test_category (
+    category_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    test_id BIGINT NOT NULL,
+    category_name VARCHAR(255),
+    display_order INT,
+    is_active BIT(1),
+    amount DOUBLE,
+    FOREIGN KEY (test_id) REFERENCES test_master(test_id)
+);
+
+
+INSERT INTO test_category (test_id, category_name, display_order, is_active, amount) VALUES
+(1, 'Complete Blood Count', 1, b'1', 300),
+(1, 'Liver Function Test', 2, b'1', 500),
+(2, 'Routine Urine Test', 1, b'1', 200);
+
+
+CREATE TABLE test_parameter (
+    param_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    category_id BIGINT NOT NULL,
+    param_name VARCHAR(255),
+    unit VARCHAR(255),
+    ref_male_min VARCHAR(255),
+    ref_male_max VARCHAR(255),
+    ref_female_min VARCHAR(255),
+    ref_female_max VARCHAR(255),
+    display_order INT,
+    is_active BIT(1),
+    FOREIGN KEY (category_id) REFERENCES test_category(category_id)
+);
+
+INSERT INTO test_parameter 
+(category_id, param_name, unit, ref_male_min, ref_male_max, ref_female_min, ref_female_max, display_order, is_active)
+VALUES
+(1, 'Hemoglobin', 'g/dL', '13', '17', '12', '15', 1, b'1'),
+(1, 'WBC Count', 'cells/mcL', '4000', '11000', '4000', '11000', 2, b'1'),
+(3, 'pH', '', '5', '7', '5', '7', 1, b'1');
+
+CREATE TABLE booking_test (
+    booking_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    patient_id BIGINT NOT NULL,
+    doctor_id INT NOT NULL,
+    booking_category JSON NOT NULL,
+    booking_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    total_amount DECIMAL(10,2) NOT NULL,
+    advance_amount DECIMAL(10,2) DEFAULT 0.00,
+    remaining_amount DECIMAL(10,2),
+    payment_status ENUM('Pending','Partial','Paid','Refunded') DEFAULT 'Pending',
+    report_status ENUM('Awaiting','In Progress','Generated','Delivered') DEFAULT 'Awaiting',
+
+    FOREIGN KEY (patient_id) REFERENCES patient(patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id)
+);
+
+
+CREATE TABLE test_report (
+    report_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    booking_id BIGINT NOT NULL,
+    category_id BIGINT NOT NULL,
+    param_id BIGINT NOT NULL,
+    result_value VARCHAR(255),
+    captured_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (booking_id) REFERENCES booking_test(booking_id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES test_category(category_id)
+);
+
+
+INSERT INTO patient (name, age, gender, phone) VALUES
+('Rahul Kumar', 30, 'Male', '9876543210'),
+('Priya Sharma', 28, 'Female', '9123456780');
+
+INSERT INTO doctor (name, commission_percentage, total_commission, received_commission) VALUES
+('Dr. Sinha', 10, 0, 0),
+('Dr. Patel', 15, 0, 0);
+
+INSERT INTO booking_test 
+(patient_id, doctor_id, booking_category, total_amount, advance_amount, remaining_amount)
+VALUES
+(1, 1, '{"tests":["Blood Test"]}', 300, 100, 200);
+
